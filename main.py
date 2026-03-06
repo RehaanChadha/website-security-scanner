@@ -1,4 +1,5 @@
 from scanner.header_scanner import scan_headers
+from scanner.port_scanner import scan_ports
 
 
 def main():
@@ -8,6 +9,7 @@ def main():
         url = "https://" + url
 
     scan_headers(url)
+    scan_ports(url.replace("https://", "").replace("http://", ""))
 
 
 if __name__ == "__main__":
