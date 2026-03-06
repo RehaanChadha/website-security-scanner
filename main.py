@@ -2,6 +2,7 @@ from colorama import Fore, Style, init
 from scanner.header_scanner import scan_headers
 from scanner.port_scanner import scan_ports
 from scanner.ssl_scanner import scan_ssl
+from scanner.vulnerability_scanner import scan_vulnerabilities
 
 init(autoreset=True)
 
@@ -23,6 +24,7 @@ def main():
     scan_headers(url)
     scan_ports(domain)
     scan_ssl(domain)
+    scan_vulnerabilities(url)
 
 
 if __name__ == "__main__":
