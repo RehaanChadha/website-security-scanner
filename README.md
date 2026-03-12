@@ -4,11 +4,11 @@ A **modular Python-based cybersecurity tool** that scans websites for common sec
 
 The scanner performs multiple checks including:
 
-- HTTP security header analysis  
-- Port scanning with Nmap  
-- SSL/TLS certificate inspection  
-- Basic vulnerability reconnaissance  
-- Automated security report generation  
+- HTTP security header analysis
+- Port scanning with Nmap
+- SSL/TLS certificate inspection
+- Basic vulnerability reconnaissance
+- Automated security report generation
 
 This project demonstrates practical security tooling concepts used in **real-world reconnaissance and vulnerability assessment workflows**.
 
@@ -119,12 +119,12 @@ reports/github.com_scan_YYYY-MM-DD_HH-MM-SS.json
 
 Python libraries:
 
-- `requests` – HTTP requests
-- `python-nmap` – Nmap integration
-- `colorama` – colored terminal output
-- `ssl` / `socket` – SSL certificate inspection
-- `argparse` – command-line interface
-- `urllib.parse` – URL parsing
+- `requests`
+- `python-nmap`
+- `colorama`
+- `ssl` / `socket`
+- `argparse`
+- `urllib.parse`
 
 External tools:
 
@@ -139,28 +139,41 @@ External tools:
 ```bash
 git clone https://github.com/RehaanChadha/website-security-scanner.git
 cd website-security-scanner
-Create a virtual environment
+Create a Virtual Environment
+Mac / Linux
 python3 -m venv venv
-
-Activate it.
-
-Mac / Linux:
-
 source venv/bin/activate
-Install dependencies
+Windows
+python -m venv venv
+venv\Scripts\activate
+Install Dependencies
 pip install -r requirements.txt
 Install Nmap
 
-Mac:
+The scanner requires Nmap for port scanning.
 
+Mac
 brew install nmap
-
-Linux:
-
+Linux
 sudo apt install nmap
+Windows
+
+Download and install Nmap from:
+
+https://nmap.org/download.html
+
+Choose the installer:
+
+nmap-setup.exe
+
+During installation make sure "Add Nmap to PATH" is selected.
+
+Verify installation:
+
+nmap --version
 Usage
 
-Run the scanner using the CLI interface.
+Run the scanner using the command-line interface.
 
 python main.py --target github.com
 
@@ -219,3 +232,19 @@ Rehaan Chadha
 
 Business Technology Management
 Toronto Metropolitan University
+
+Future Improvements
+
+Possible enhancements:
+
+Advanced vulnerability detection
+
+Subdomain discovery
+
+Directory brute forcing
+
+HTML report dashboard
+
+Multi-target scanning
+
+Integration with security APIs
