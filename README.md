@@ -14,9 +14,9 @@ This project demonstrates practical security tooling concepts used in **real-wor
 
 ---
 
-# Features
+## Features
 
-## Security Header Analysis
+### Security Header Analysis
 
 Detects missing or misconfigured HTTP security headers that protect against common attacks.
 
@@ -29,30 +29,26 @@ Examples:
 
 Example output:
 
-
+```text
 [✓] Content-Security-Policy found
 [✓] Strict-Transport-Security found
 [✓] X-Frame-Options found
 [✗] Permissions-Policy missing
+```
 
+### Port Scanning
 
----
-
-## Port Scanning
-
-Identifies open ports and exposed services using **Nmap integration**.
+Identifies open ports and exposed services using Nmap integration.
 
 Example findings:
 
-
+```text
 Port 22 → SSH
 Port 80 → HTTP
 Port 443 → HTTPS
+```
 
-
----
-
-## SSL/TLS Inspection
+### SSL/TLS Inspection
 
 Analyzes SSL certificates to detect potential configuration issues.
 
@@ -64,15 +60,13 @@ Checks include:
 
 Example:
 
-
+```text
 Certificate Issuer: Sectigo Limited
 Certificate Expiry: 2026-06-03
 Days Remaining: 83
+```
 
-
----
-
-## Basic Vulnerability Reconnaissance
+### Basic Vulnerability Reconnaissance
 
 Performs lightweight reconnaissance checks including:
 
@@ -83,39 +77,31 @@ Performs lightweight reconnaissance checks including:
 
 Examples:
 
-
+```text
 /backup
 /config
 /test
+```
 
+These findings represent potential exposure points, not confirmed vulnerabilities.
 
-These findings represent **potential exposure points**, not confirmed vulnerabilities.
+### Automated Reporting
 
----
+The scanner automatically generates two report formats.
 
-## Automated Reporting
+Text report:
 
-The scanner automatically generates **two report formats**.
-
-### Text Report
-
-Human-readable scan report.
-
-
+```text
 reports/github.com_scan_YYYY-MM-DD_HH-MM-SS.txt
+```
 
+JSON report:
 
-### JSON Report
-
-Structured report suitable for automation and security pipelines.
-
-
+```text
 reports/github.com_scan_YYYY-MM-DD_HH-MM-SS.json
+```
 
-
----
-
-# Technologies Used
+## Technologies Used
 
 Python libraries:
 
@@ -128,80 +114,117 @@ Python libraries:
 
 External tools:
 
-- **Nmap**
+- `nmap`
 
----
+## Installation
 
-# Installation
-
-## Clone the repository
+### Clone the repository
 
 ```bash
 git clone https://github.com/RehaanChadha/website-security-scanner.git
 cd website-security-scanner
-Create a Virtual Environment
-Mac / Linux
+```
+
+### Create a virtual environment
+
+Mac / Linux:
+
+```bash
 python3 -m venv venv
 source venv/bin/activate
-Windows
+```
+
+Windows:
+
+```bash
 python -m venv venv
 venv\Scripts\activate
-Install Dependencies
+```
+
+### Install dependencies
+
+```bash
 pip install -r requirements.txt
-Install Nmap
+```
+
+### Install Nmap
 
 The scanner requires Nmap for port scanning.
 
-Mac
+Mac:
+
+```bash
 brew install nmap
-Linux
+```
+
+Linux:
+
+```bash
 sudo apt install nmap
-Windows
+```
+
+Windows:
 
 Download and install Nmap from:
 
-https://nmap.org/download.html
+`https://nmap.org/download.html`
 
 Choose the installer:
 
-nmap-setup.exe
+`nmap-setup.exe`
 
-During installation make sure "Add Nmap to PATH" is selected.
+During installation, make sure `Add Nmap to PATH` is selected.
 
 Verify installation:
 
+```bash
 nmap --version
-Usage
+```
 
-Run the scanner using the command-line interface.
+## Usage
 
-python main.py --target github.com
+Run the scanner:
 
-You can also scan full URLs.
+```bash
+python3 main.py
+```
 
-python main.py --target https://example.com
-Example Output
+Enter a hostname or full URL when prompted, for example:
+
+```text
+github.com
+https://example.com
+```
+
+## Example Output
+
+```text
 Starting scan for: https://github.com
 
-Scanning Security Headers...
+Scanning Security Headers for: https://github.com
+HTTP Status Code: 200
 
 [✓] Content-Security-Policy found
 [✓] Strict-Transport-Security found
 [✓] X-Frame-Options found
 [✗] Permissions-Policy missing
 
-Scanning Open Ports...
+Scanning Open Ports for: github.com
 
 [✓] Port 22 open → ssh
 [✓] Port 80 open → http
 [✓] Port 443 open → https
 
-Scanning SSL/TLS...
+Scanning SSL/TLS for: github.com
 
 Certificate Issuer: Sectigo Limited
-Certificate Expiry: 2026-06-03
-Days Remaining: 83
-Project Structure
+Certificate Expiry: 2026-06-03 23:59:59
+Days Remaining: 83 days
+```
+
+## Project Structure
+
+```text
 website-security-scanner
 │
 ├── main.py
@@ -218,7 +241,9 @@ website-security-scanner
 │   └── report_generator.py
 │
 └── reports
-Educational Purpose
+```
+
+## Educational Purpose
 
 This tool is intended for educational and research purposes only.
 
@@ -226,25 +251,8 @@ Only scan systems you own or have permission to test.
 
 Unauthorized scanning may violate laws or organizational policies.
 
-Author
+## Author
 
-Rehaan Chadha
-
-Business Technology Management
+Rehaan Chadha  
+Business Technology Management  
 Toronto Metropolitan University
-
-Future Improvements
-
-Possible enhancements:
-
-Advanced vulnerability detection
-
-Subdomain discovery
-
-Directory brute forcing
-
-HTML report dashboard
-
-Multi-target scanning
-
-Integration with security APIs
