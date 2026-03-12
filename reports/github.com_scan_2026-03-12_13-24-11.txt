@@ -1,0 +1,25 @@
+Website Security Scan Report
+Target: github.com
+URL: https://github.com
+
+Header Scan:
+- Status Code: 200
+- Headers Found: Content-Security-Policy, Strict-Transport-Security, X-Frame-Options, X-Content-Type-Options, Referrer-Policy
+- Headers Missing: Permissions-Policy
+
+Port Scan:
+- Open Ports: 22 (ssh), 53 (domain), 80 (http), 443 (https)
+
+SSL Scan:
+- Issuer: Sectigo Limited
+- Expiry Date: 2026-06-03 23:59:59
+- Days Remaining: 83
+
+Vulnerability Scan:
+- HTTPS Used: True
+- Server Header: github.com
+- X-Powered-By: hidden
+- Interesting Paths: https://github.com/backup, https://github.com/test, https://github.com/config
+
+Scan Status:
+Completed successfully

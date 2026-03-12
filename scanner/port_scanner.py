@@ -3,6 +3,10 @@ from colorama import Fore, Style
 
 
 def scan_ports(target):
+    results = {
+        "open_ports": []
+    }
+
     try:
         scanner = nmap.PortScanner()
 
@@ -12,7 +16,8 @@ def scan_ports(target):
 
         if not scanner.all_hosts():
             print(f"{Fore.RED}No host found or target is unreachable.{Style.RESET_ALL}")
-            return
+            results["error"] = "Host unreachable"
+            return results
 
         host = scanner.all_hosts()[0]
 
@@ -25,8 +30,15 @@ def scan_ports(target):
 
                 if state == "open":
                     print(f"{Fore.GREEN}[✓] Port {port} open → {service}{Style.RESET_ALL}")
+                    results["open_ports"].append({
+                        "port": port,
+                        "service": service
+                    })
                 else:
                     print(f"{Fore.RED}[✗] Port {port} {state}{Style.RESET_ALL}")
 
     except Exception as e:
         print(f"{Fore.RED}Error scanning ports: {e}{Style.RESET_ALL}")
+        results["error"] = str(e)
+
+    return results

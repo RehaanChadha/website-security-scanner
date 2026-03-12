@@ -5,6 +5,12 @@ from colorama import Fore, Style
 
 
 def scan_ssl(domain):
+    results = {
+        "issuer": None,
+        "expiry_date": None,
+        "days_remaining": None
+    }
+
     try:
         print(f"\n{Fore.CYAN}Scanning SSL/TLS for: {domain}{Style.RESET_ALL}\n")
 
@@ -20,6 +26,10 @@ def scan_ssl(domain):
         expiry_date = datetime.strptime(cert["notAfter"], "%b %d %H:%M:%S %Y %Z")
         days_left = (expiry_date - datetime.utcnow()).days
 
+        results["issuer"] = issued_by
+        results["expiry_date"] = str(expiry_date)
+        results["days_remaining"] = days_left
+
         print(f"{Fore.GREEN}Certificate Issuer:{Style.RESET_ALL} {issued_by}")
         print(f"{Fore.GREEN}Certificate Expiry:{Style.RESET_ALL} {expiry_date}")
         print(f"{Fore.GREEN}Days Remaining:{Style.RESET_ALL} {days_left} days")
@@ -29,3 +39,6 @@ def scan_ssl(domain):
 
     except Exception as e:
         print(f"{Fore.RED}Error scanning SSL: {e}{Style.RESET_ALL}")
+        results["error"] = str(e)
+
+    return results

@@ -1,0 +1,65 @@
+{
+    "target": "github.com",
+    "url": "https://github.com",
+    "status": "completed",
+    "results": {
+        "header_scan": {
+            "status_code": 200,
+            "headers_found": [
+                "Content-Security-Policy",
+                "Strict-Transport-Security",
+                "X-Frame-Options",
+                "X-Content-Type-Options",
+                "Referrer-Policy"
+            ],
+            "headers_missing": [
+                "Permissions-Policy"
+            ]
+        },
+        "port_scan": {
+            "open_ports": [
+                {
+                    "port": 22,
+                    "service": "ssh"
+                },
+                {
+                    "port": 53,
+                    "service": "domain"
+                },
+                {
+                    "port": 80,
+                    "service": "http"
+                },
+                {
+                    "port": 443,
+                    "service": "https"
+                }
+            ]
+        },
+        "ssl_scan": {
+            "issuer": "Sectigo Limited",
+            "expiry_date": "2026-06-03 23:59:59",
+            "days_remaining": 83
+        },
+        "vulnerability_scan": {
+            "https_used": true,
+            "server_header": "github.com",
+            "x_powered_by": "hidden",
+            "interesting_paths": [
+                {
+                    "path": "https://github.com/backup",
+                    "status": 200
+                },
+                {
+                    "path": "https://github.com/test",
+                    "status": 200
+                },
+                {
+                    "path": "https://github.com/config",
+                    "status": 200
+                }
+            ],
+            "final_url": "https://github.com/"
+        }
+    }
+}
