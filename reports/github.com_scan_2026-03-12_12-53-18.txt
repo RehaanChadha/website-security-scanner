@@ -1,0 +1,12 @@
+Website Security Scan Report
+Target: github.com
+URL: https://github.com
+
+Modules Run:
+- Header Scanner
+- Port Scanner
+- SSL Scanner
+- Vulnerability Scanner
+
+Scan Status:
+Completed successfully
