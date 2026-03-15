@@ -212,6 +212,36 @@ Available routes:
 - `POST /scan` → run a scan and render results
 - `GET /health` → health check JSON response
 
+## Deploying on Render
+
+This project is set up for Render using Docker so the production service also has `nmap` installed.
+
+Files included for deployment:
+
+- `Dockerfile` builds the app image and installs `nmap`
+- `render.yaml` lets Render detect the service configuration from the repo
+- `gunicorn` is used as the production web server
+
+Deploy steps:
+
+1. Push the latest code to GitHub.
+2. In Render, click `New +` and choose `Blueprint`.
+3. Connect your GitHub repo and select `website-security-scanner`.
+4. Render will read `render.yaml` and create the web service.
+5. Once the build finishes, open the Render URL for your live site.
+
+The service will start with:
+
+```bash
+gunicorn --bind 0.0.0.0:10000 app:app
+```
+
+Health check endpoint:
+
+```text
+/health
+```
+
 ## Running the CLI
 
 Run the original CLI scanner:
