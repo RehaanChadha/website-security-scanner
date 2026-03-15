@@ -1,142 +1,91 @@
 # Website Security Scanner
 
-A **modular Python-based cybersecurity tool** that scans websites for common security misconfigurations and exposure risks through both a **CLI** and a **Flask web app**.
+A full-stack cybersecurity project that scans websites for common security misconfigurations and presents the results through both a Flask web app and a Python CLI.
 
-The scanner performs multiple checks including:
+## Live Demo
 
-- HTTP security header analysis
-- Port scanning with Nmap
-- SSL/TLS certificate inspection
-- Basic vulnerability reconnaissance
-- Automated security report generation
-- Browser-based scan results with a responsive dashboard
+`https://website-security-scanner-fmbz.onrender.com`
 
-This project demonstrates practical security tooling concepts used in **real-world reconnaissance and vulnerability assessment workflows**.
+## Overview
 
----
+This project was built to showcase practical web security tooling concepts in a portfolio-ready format. It combines multiple scanner modules into one experience that can:
+
+- analyze HTTP security headers
+- inspect SSL/TLS certificate details
+- detect open ports with `nmap`
+- perform lightweight exposure checks
+- generate structured scan results for both terminal and web use
+
+The application is designed as a modular Python project with a shared scan service powering both interfaces.
 
 ## Features
 
-### Security Header Analysis
+- Flask-based web interface for browser-driven scanning
+- Python CLI for local terminal usage
+- Shared orchestration layer for consistent scan results
+- Partial-failure handling so one failed module does not break the full scan
+- Text and JSON report generation
+- Render deployment using Docker
 
-Detects missing or misconfigured HTTP security headers that protect against common attacks.
+## Tech Stack
 
-Examples:
-
-- Content Security Policy
-- HSTS (Strict Transport Security)
-- Clickjacking protection
-- MIME sniffing protection
-
-Example output:
-
-```text
-[✓] Content-Security-Policy found
-[✓] Strict-Transport-Security found
-[✓] X-Frame-Options found
-[✗] Permissions-Policy missing
-```
-
-### Port Scanning
-
-Identifies open ports and exposed services using Nmap integration.
-
-Example findings:
-
-```text
-Port 22 → SSH
-Port 80 → HTTP
-Port 443 → HTTPS
-```
-
-### SSL/TLS Inspection
-
-Analyzes SSL certificates to detect potential configuration issues.
-
-Checks include:
-
-- Certificate issuer
-- Expiration date
-- Remaining validity period
-
-Example:
-
-```text
-Certificate Issuer: Sectigo Limited
-Certificate Expiry: 2026-06-03
-Days Remaining: 83
-```
-
-### Basic Vulnerability Reconnaissance
-
-Performs lightweight reconnaissance checks including:
-
-- HTTPS usage verification
-- Exposed server headers
-- Technology fingerprinting
-- Discovery of potentially sensitive paths
-
-Examples:
-
-```text
-/backup
-/config
-/test
-```
-
-These findings represent potential exposure points, not confirmed vulnerabilities.
-
-### Automated Reporting
-
-The scanner automatically generates two report formats.
-
-Text report:
-
-```text
-reports/github.com_scan_YYYY-MM-DD_HH-MM-SS.txt
-```
-
-JSON report:
-
-```text
-reports/github.com_scan_YYYY-MM-DD_HH-MM-SS.json
-```
-
-### Web Dashboard
-
-The project now includes a Flask-powered web interface with:
-
-- A landing page and scan form
-- In-browser results for headers, ports, SSL, and exposure checks
-- Clear partial-failure handling when one scan module errors
-- A `/health` endpoint for deployment checks
-
-## Technologies Used
-
-Python libraries:
-
-- `requests`
+- Python
+- Flask
+- Requests
 - `python-nmap`
-- `colorama`
-- `Flask`
-- `ssl` / `socket`
-- `argparse`
-- `urllib.parse`
+- HTML / CSS
+- Gunicorn
+- Docker
+- Render
 
-External tools:
+## How It Works
 
-- `nmap`
+The scan flow is organized around a shared service layer:
+
+1. A target URL or hostname is submitted.
+2. The target is normalized and validated.
+3. The scanner runs:
+   - security header analysis
+   - port scanning
+   - SSL inspection
+   - vulnerability/exposure checks
+4. Results are combined into one structured response.
+5. The response is rendered in the web UI or exported through the CLI report flow.
+
+## Project Structure
+
+```text
+website-security-scanner/
+├── app.py
+├── main.py
+├── requirements.txt
+├── Dockerfile
+├── render.yaml
+├── scanner/
+│   ├── header_scanner.py
+│   ├── port_scanner.py
+│   ├── ssl_scanner.py
+│   └── vulnerability_scanner.py
+├── services/
+│   └── scan_service.py
+├── static/
+├── templates/
+├── tests/
+├── utils/
+│   └── report_generator.py
+└── reports/
+```
 
 ## Installation
 
-### Clone the repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/RehaanChadha/website-security-scanner.git
 cd website-security-scanner
 ```
 
-### Create a virtual environment
+### 2. Create a virtual environment
 
 Mac / Linux:
 
@@ -152,15 +101,13 @@ python -m venv venv
 venv\Scripts\activate
 ```
 
-### Install dependencies
+### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Install Nmap
-
-The scanner requires Nmap for port scanning.
+### 4. Install `nmap`
 
 Mac:
 
@@ -176,147 +123,52 @@ sudo apt install nmap
 
 Windows:
 
-Download and install Nmap from:
+Download and install `nmap` from:
 
 `https://nmap.org/download.html`
 
-Choose the installer:
+## Run Locally
 
-`nmap-setup.exe`
-
-During installation, make sure `Add Nmap to PATH` is selected.
-
-Verify installation:
-
-```bash
-nmap --version
-```
-
-## Running the Web App
-
-Start the Flask app:
+### Web App
 
 ```bash
 python3 app.py
 ```
 
-Then open:
+Open:
 
 ```text
 http://127.0.0.1:5000
 ```
 
-Available routes:
-
-- `GET /` → landing page and scan form
-- `POST /scan` → run a scan and render results
-- `GET /health` → health check JSON response
-
-## Deploying on Render
-
-This project is set up for Render using Docker so the production service also has `nmap` installed.
-
-Files included for deployment:
-
-- `Dockerfile` builds the app image and installs `nmap`
-- `render.yaml` lets Render detect the service configuration from the repo
-- `gunicorn` is used as the production web server
-
-Deploy steps:
-
-1. Push the latest code to GitHub.
-2. In Render, click `New +` and choose `Blueprint`.
-3. Connect your GitHub repo and select `website-security-scanner`.
-4. Render will read `render.yaml` and create the web service.
-5. Once the build finishes, open the Render URL for your live site.
-
-The service will start with:
-
-```bash
-gunicorn --bind 0.0.0.0:10000 app:app
-```
-
-Health check endpoint:
-
-```text
-/health
-```
-
-## Running the CLI
-
-Run the original CLI scanner:
+### CLI
 
 ```bash
 python3 main.py --target github.com
 ```
 
-The CLI and the web app both use the same shared scan orchestration logic.
+## Deployment
 
-## Usage
+This project is deployed on Render and includes:
 
-Run the scanner from the command line:
+- `Dockerfile` for containerized deployment
+- `render.yaml` for Render blueprint setup
+- `gunicorn` as the production application server
+
+## Testing
+
+Run the test suite with:
 
 ```bash
-python3 main.py --target github.com
+venv/bin/python -m unittest discover -s tests
 ```
 
-## Example Output
+## Notes
 
-```text
-Starting scan for: https://github.com
-
-Scanning Security Headers for: https://github.com
-HTTP Status Code: 200
-
-[✓] Content-Security-Policy found
-[✓] Strict-Transport-Security found
-[✓] X-Frame-Options found
-[✗] Permissions-Policy missing
-
-Scanning Open Ports for: github.com
-
-[✓] Port 22 open → ssh
-[✓] Port 80 open → http
-[✓] Port 443 open → https
-
-Scanning SSL/TLS for: github.com
-
-Certificate Issuer: Sectigo Limited
-Certificate Expiry: 2026-06-03 23:59:59
-Days Remaining: 83 days
-```
-
-## Project Structure
-
-```text
-website-security-scanner
-│
-├── main.py
-├── requirements.txt
-├── README.md
-│
-├── scanner
-│   ├── header_scanner.py
-│   ├── port_scanner.py
-│   ├── ssl_scanner.py
-│   └── vulnerability_scanner.py
-│
-├── utils
-│   └── report_generator.py
-│
-└── reports
-```
-
-## Educational Purpose
-
-This tool is intended for educational and research purposes only.
-
-Only scan systems you own or have permission to test.
-
-Unauthorized scanning may violate laws or organizational policies.
+- Port scanning depends on `nmap` being installed on the host environment.
+- Some targets may block or rate-limit requests.
+- This tool is intended for educational and authorized testing only.
 
 ## Author
 
-Rehaan Chadha  
-Business Technology Management  
-Toronto Metropolitan University
+Rehaan Chadha
