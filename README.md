@@ -1,6 +1,6 @@
 # Website Security Scanner
 
-A **modular Python-based cybersecurity tool** that scans websites for common security misconfigurations and exposure risks.
+A **modular Python-based cybersecurity tool** that scans websites for common security misconfigurations and exposure risks through both a **CLI** and a **Flask web app**.
 
 The scanner performs multiple checks including:
 
@@ -9,6 +9,7 @@ The scanner performs multiple checks including:
 - SSL/TLS certificate inspection
 - Basic vulnerability reconnaissance
 - Automated security report generation
+- Browser-based scan results with a responsive dashboard
 
 This project demonstrates practical security tooling concepts used in **real-world reconnaissance and vulnerability assessment workflows**.
 
@@ -101,6 +102,15 @@ JSON report:
 reports/github.com_scan_YYYY-MM-DD_HH-MM-SS.json
 ```
 
+### Web Dashboard
+
+The project now includes a Flask-powered web interface with:
+
+- A landing page and scan form
+- In-browser results for headers, ports, SSL, and exposure checks
+- Clear partial-failure handling when one scan module errors
+- A `/health` endpoint for deployment checks
+
 ## Technologies Used
 
 Python libraries:
@@ -108,6 +118,7 @@ Python libraries:
 - `requests`
 - `python-nmap`
 - `colorama`
+- `Flask`
 - `ssl` / `socket`
 - `argparse`
 - `urllib.parse`
@@ -181,19 +192,42 @@ Verify installation:
 nmap --version
 ```
 
-## Usage
+## Running the Web App
 
-Run the scanner:
+Start the Flask app:
 
 ```bash
-python3 main.py
+python3 app.py
 ```
 
-Enter a hostname or full URL when prompted, for example:
+Then open:
 
 ```text
-github.com
-https://example.com
+http://127.0.0.1:5000
+```
+
+Available routes:
+
+- `GET /` → landing page and scan form
+- `POST /scan` → run a scan and render results
+- `GET /health` → health check JSON response
+
+## Running the CLI
+
+Run the original CLI scanner:
+
+```bash
+python3 main.py --target github.com
+```
+
+The CLI and the web app both use the same shared scan orchestration logic.
+
+## Usage
+
+Run the scanner from the command line:
+
+```bash
+python3 main.py --target github.com
 ```
 
 ## Example Output

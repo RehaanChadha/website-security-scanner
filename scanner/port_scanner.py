@@ -2,20 +2,24 @@ import nmap
 from colorama import Fore, Style
 
 
-def scan_ports(target):
+def scan_ports(target, verbose=True):
     results = {
         "open_ports": []
     }
 
+    def log(message):
+        if verbose:
+            print(message)
+
     try:
         scanner = nmap.PortScanner()
 
-        print(f"\n{Fore.CYAN}Scanning Open Ports for: {target}{Style.RESET_ALL}\n")
+        log(f"\n{Fore.CYAN}Scanning Open Ports for: {target}{Style.RESET_ALL}\n")
 
         scanner.scan(hosts=target, arguments="-F")
 
         if not scanner.all_hosts():
-            print(f"{Fore.RED}No host found or target is unreachable.{Style.RESET_ALL}")
+            log(f"{Fore.RED}No host found or target is unreachable.{Style.RESET_ALL}")
             results["error"] = "Host unreachable"
             return results
 
@@ -29,16 +33,22 @@ def scan_ports(target):
                 service = scanner[host][protocol][port].get("name", "unknown")
 
                 if state == "open":
-                    print(f"{Fore.GREEN}[✓] Port {port} open → {service}{Style.RESET_ALL}")
+                    log(f"{Fore.GREEN}[✓] Port {port} open → {service}{Style.RESET_ALL}")
                     results["open_ports"].append({
                         "port": port,
                         "service": service
                     })
                 else:
-                    print(f"{Fore.RED}[✗] Port {port} {state}{Style.RESET_ALL}")
+                    log(f"{Fore.RED}[✗] Port {port} {state}{Style.RESET_ALL}")
 
     except Exception as e:
-        print(f"{Fore.RED}Error scanning ports: {e}{Style.RESET_ALL}")
-        results["error"] = str(e)
+        log(f"{Fore.RED}Error scanning ports: {e}{Style.RESET_ALL}")
+        error_text = str(e)
+        if "nmap program was not found" in error_text.lower():
+            error_text = (
+                "Nmap is not installed or not available on the server. "
+                "Port scanning is unavailable."
+            )
+        results["error"] = error_text
 
     return results

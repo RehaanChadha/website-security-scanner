@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Website Security Scanner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="hero">
+            <div class="hero-copy">
+                <p class="eyebrow">Portfolio-ready security tooling</p>
+                <h1>Scan a website and turn raw findings into a readable security snapshot.</h1>
+                <p class="hero-text">
+                    This web app wraps your Python scanner in a clean browser workflow for security headers,
+                    ports, SSL details, and lightweight exposure checks.
+                </p>
+                <div class="feature-strip">
+                    <span>Header analysis</span>
+                    <span>Fast port checks</span>
+                    <span>SSL visibility</span>
+                    <span>Exposure hints</span>
+                </div>
+            </div>
+            <form class="scan-panel" action="{{ url_for('scan') }}" method="post">
+                <label class="field-label" for="target">Target website</label>
+                <input
+                    id="target"
+                    name="target"
+                    type="text"
+                    placeholder="github.com or https://example.com"
+                    value="{{ submitted_target or '' }}"
+                    autocomplete="off"
+                >
+                <p class="field-hint">Use a public hostname or full website URL. The app will normalize the target automatically.</p>
+                <button type="submit">Run security scan</button>
+                {% if error_message %}
+                <div class="inline-message error">{{ error_message }}</div>
+                {% endif %}
+            </form>
+        </header>
+
+        <section class="info-grid">
+            <article class="info-card">
+                <h2>What it checks</h2>
+                <p>Core headers, open ports, certificate details, HTTPS behavior, exposed response headers, and a few interesting paths.</p>
+            </article>
+            <article class="info-card">
+                <h2>How it behaves</h2>
+                <p>Scans run synchronously and can still return partial results if one module fails, including a clear error per section.</p>
+            </article>
+            <article class="info-card">
+                <h2>Deployment note</h2>
+                <p>Port scanning depends on <code>nmap</code> being installed on the machine running this app.</p>
+            </article>
+        </section>
+
+        {% if report_data %}
+        <section class="results">
+            <div class="status-banner {{ 'warning' if report_data.status == 'completed_with_errors' else 'success' }}">
+                <div>
+                    <p class="status-label">Scan status</p>
+                    <h2>
+                        {{ 'Completed with errors' if report_data.status == 'completed_with_errors' else 'Completed successfully' }}
+                    </h2>
+                </div>
+                <div class="status-meta">
+                    <span>{{ report_data.target }}</span>
+                    <span>{{ '%.2f'|format(duration_seconds) }}s</span>
+                </div>
+            </div>
+
+            <div class="summary-grid">
+                <article class="summary-card">
+                    <p class="summary-label">Submitted target</p>
+                    <strong>{{ submitted_target }}</strong>
+                </article>
+                <article class="summary-card">
+                    <p class="summary-label">Normalized URL</p>
+                    <strong>{{ report_data.url }}</strong>
+                </article>
+                <article class="summary-card">
+                    <p class="summary-label">Hostname</p>
+                    <strong>{{ target.hostname }}</strong>
+                </article>
+            </div>
+
+            <div class="results-grid">
+                <article class="result-card">
+                    <div class="card-header">
+                        <h3>Security headers</h3>
+                        <span>HTTP {{ results.header_scan.status_code or 'n/a' }}</span>
+                    </div>
+                    {% if results.header_scan.error %}
+                    <p class="section-error">{{ results.header_scan.error }}</p>
+                    {% endif %}
+                    <div class="pill-group">
+                        {% for header in results.header_scan.headers_found %}
+                        <span class="pill positive">{{ header }}</span>
+                        {% else %}
+                        <span class="muted">No headers detected.</span>
+                        {% endfor %}
+                    </div>
+                    <h4>Missing headers</h4>
+                    <div class="pill-group">
+                        {% for header in results.header_scan.headers_missing %}
+                        <span class="pill negative">{{ header }}</span>
+                        {% else %}
+                        <span class="muted">No missing headers reported.</span>
+                        {% endfor %}
+                    </div>
+                </article>
+
+                <article class="result-card">
+                    <div class="card-header">
+                        <h3>Open ports</h3>
+                        <span>{{ results.port_scan.open_ports|length }} found</span>
+                    </div>
+                    {% if results.port_scan.error %}
+                    <p class="section-error">{{ results.port_scan.error }}</p>
+                    {% endif %}
+                    <div class="table-like">
+                        {% for port in results.port_scan.open_ports %}
+                        <div class="row">
+                            <span>{{ port.port }}</span>
+                            <span>{{ port.service }}</span>
+                        </div>
+                        {% else %}
+                        <p class="muted">No open ports reported.</p>
+                        {% endfor %}
+                    </div>
+                </article>
+
+                <article class="result-card">
+                    <div class="card-header">
+                        <h3>SSL certificate</h3>
+                        <span>
+                            {% if results.ssl_scan.days_remaining is not none and results.ssl_scan.days_remaining < 30 %}
+                            Expiring soon
+                            {% else %}
+                            Healthy
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% if results.ssl_scan.error %}
+                    <p class="section-error">{{ results.ssl_scan.error }}</p>
+                    {% endif %}
+                    <dl class="detail-list">
+                        <div>
+                            <dt>Issuer</dt>
+                            <dd>{{ results.ssl_scan.issuer or 'Unavailable' }}</dd>
+                        </div>
+                        <div>
+                            <dt>Expiry date</dt>
+                            <dd>{{ results.ssl_scan.expiry_date or 'Unavailable' }}</dd>
+                        </div>
+                        <div>
+                            <dt>Days remaining</dt>
+                            <dd>{{ results.ssl_scan.days_remaining if results.ssl_scan.days_remaining is not none else 'Unavailable' }}</dd>
+                        </div>
+                    </dl>
+                </article>
+
+                <article class="result-card">
+                    <div class="card-header">
+                        <h3>Exposure checks</h3>
+                        <span>{{ results.vulnerability_scan.interesting_paths|length }} paths</span>
+                    </div>
+                    {% if results.vulnerability_scan.error %}
+                    <p class="section-error">{{ results.vulnerability_scan.error }}</p>
+                    {% endif %}
+                    <dl class="detail-list">
+                        <div>
+                            <dt>HTTPS used</dt>
+                            <dd>{{ 'Yes' if results.vulnerability_scan.https_used else 'No' if results.vulnerability_scan.https_used is not none else 'Unavailable' }}</dd>
+                        </div>
+                        <div>
+                            <dt>Server header</dt>
+                            <dd>{{ results.vulnerability_scan.server_header or 'Unavailable' }}</dd>
+                        </div>
+                        <div>
+                            <dt>X-Powered-By</dt>
+                            <dd>{{ results.vulnerability_scan.x_powered_by or 'Unavailable' }}</dd>
+                        </div>
+                    </dl>
+                    <h4>Interesting paths</h4>
+                    <div class="table-like">
+                        {% for item in results.vulnerability_scan.interesting_paths %}
+                        <div class="row">
+                            <span>{{ item.path }}</span>
+                            <span>Status {{ item.status }}</span>
+                        </div>
+                        {% else %}
+                        <p class="muted">No interesting paths reported.</p>
+                        {% endfor %}
+                    </div>
+                </article>
+            </div>
+        </section>
+        {% endif %}
+    </div>
+</body>
+</html>

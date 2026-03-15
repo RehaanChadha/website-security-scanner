@@ -4,15 +4,19 @@ from datetime import datetime
 from colorama import Fore, Style
 
 
-def scan_ssl(domain):
+def scan_ssl(domain, verbose=True):
     results = {
         "issuer": None,
         "expiry_date": None,
         "days_remaining": None
     }
 
+    def log(message):
+        if verbose:
+            print(message)
+
     try:
-        print(f"\n{Fore.CYAN}Scanning SSL/TLS for: {domain}{Style.RESET_ALL}\n")
+        log(f"\n{Fore.CYAN}Scanning SSL/TLS for: {domain}{Style.RESET_ALL}\n")
 
         context = ssl.create_default_context()
 
@@ -30,15 +34,15 @@ def scan_ssl(domain):
         results["expiry_date"] = str(expiry_date)
         results["days_remaining"] = days_left
 
-        print(f"{Fore.GREEN}Certificate Issuer:{Style.RESET_ALL} {issued_by}")
-        print(f"{Fore.GREEN}Certificate Expiry:{Style.RESET_ALL} {expiry_date}")
-        print(f"{Fore.GREEN}Days Remaining:{Style.RESET_ALL} {days_left} days")
+        log(f"{Fore.GREEN}Certificate Issuer:{Style.RESET_ALL} {issued_by}")
+        log(f"{Fore.GREEN}Certificate Expiry:{Style.RESET_ALL} {expiry_date}")
+        log(f"{Fore.GREEN}Days Remaining:{Style.RESET_ALL} {days_left} days")
 
         if days_left < 30:
-            print(f"{Fore.RED}⚠ Certificate expiring soon!{Style.RESET_ALL}")
+            log(f"{Fore.RED}Certificate expiring soon!{Style.RESET_ALL}")
 
     except Exception as e:
-        print(f"{Fore.RED}Error scanning SSL: {e}{Style.RESET_ALL}")
+        log(f"{Fore.RED}Error scanning SSL: {e}{Style.RESET_ALL}")
         results["error"] = str(e)
 
     return results
